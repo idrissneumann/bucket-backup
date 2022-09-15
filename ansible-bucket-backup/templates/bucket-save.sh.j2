@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+# Backup variables
+BACKUPS_FOLDER="{{ backup_folder }}"
+mkdir -p "$BACKUPS_FOLDER"
+
+DATE_FORMAT="{{ backup_date_format }}"
+EXECUTION_DATE="$(date "$DATE_FORMAT")"
+
+# Bucket file sync variables
+BUCKET_ENDPOINT="{{ bucket_endpoint }}"
+BUCKET_ACCESS_KEY="{{ bucket_access_key }}"
+BUCKET_SECRET_KEY="{{ bucket_secret_key }}"
+BUCKET_NAME="{{ bucket_name }}"
+
+{% if backup_cmd is defined and backup_cmd %}
+{{ backup_cmd }}
+{% endif %}
+
+{% if zip_compress_backup_enable is defined and zip_compress_backup_enable %}
+BACKUP_ZIP_FILE_FOLDER="{{ backup_zip_file_folder }}"
+mkdir -p "$BACKUP_ZIP_FILE_FOLDER"
+BACKUP_DATA_FOLDER="$EXECUTION_DATE"
+BACKUP_ZIP_FILE="$BACKUP_DATA_FOLDER.zip"
+BACKUP_ZIP_FILE_DESTINATION="$BACKUP_ZIP_FILE_FOLDER/$BACKUP_ZIP_FILE"
+VOLUME_BACKUP="${BACKUP_ZIP_FILE_FOLDER}":{{ backup_inside_container }}
+{% else %}
+BACKUP_ZIP_FILE="$(ls "$BACKUPS_FOLDER" | grep "$EXECUTION_DATE")"
+VOLUME_BACKUP="${BACKUPS_FOLDER}":{{ backup_inside_container }}
+{% endif %}
+
+{% if matomo_backup_enable is defined and matomo_backup_enable %}
+BACKUP_ZIP_FILE="$(ls "$BACKUPS_FOLDER" | grep "$EXECUTION_DATE")"
+VOLUME_BACKUP="/$(pwd)/${BACKUPS_FOLDER}":{{ backup_inside_container }}
+{% endif %}
+
+{% if zip_compress_backup_enable is defined and zip_compress_backup_enable %}
+zip -r "$BACKUP_ZIP_FILE_DESTINATION" "$BACKUPS_FOLDER"
+{% endif %}
+
+echo "Pulling bucket backup file sync image"
+
+docker pull {{ backup_bucket_image }}:{{ backup_bucket_image_tag }}
+
+docker run \
+  -e BUCKET_ENDPOINT="$BUCKET_ENDPOINT" \
+  -e BUCKET_ACCESS_KEY="$BUCKET_ACCESS_KEY" \
+  -e BUCKET_SECRET_KEY="$BUCKET_SECRET_KEY" \
+  -e BUCKET_NAME="$BUCKET_NAME" \
+  -e MAX_RETENTION="{{ backup_max_retention }}" \
+  -e BACKUP_LOCATION="{{ backup_inside_container }}/$BACKUP_ZIP_FILE" \
+  -e FILE_NAME="$BACKUP_ZIP_FILE" \
+  -v "${VOLUME_BACKUP}" \
+  --rm \
+  --name backup \
+  {{ backup_bucket_image }}:{{ backup_bucket_image_tag }}
+
+{% if zip_compress_backup_enable is defined and zip_compress_backup_enable %}
+rm -rf "$BACKUP_ZIP_FILE_DESTINATION"
+{% endif %}
+
+{% if backup_src_file_to_clean is defined and backup_src_file_to_clean %}
+rm -rf "$BACKUPS_FOLDER"/{{ backup_src_file_to_clean }}
+{% endif %}
+
+{% if backup_post_clean_cmd is defined and backup_post_clean_cmd %}
+{{ backup_post_clean_cmd }}
+{% endif %}

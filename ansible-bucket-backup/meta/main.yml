@@ -1,0 +1,10 @@
+galaxy_info:
+  role_name: bucket-backup
+  author: Idriss Neumann
+  description: Install and configure backup based on object storage buckets
+  company: Comwork
+
+  min_ansible_version: 2.2
+
+  platforms:
+    - name: CentOS

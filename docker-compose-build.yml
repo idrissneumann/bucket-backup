@@ -1,0 +1,8 @@
+version: "3.3"
+
+services: 
+  bucket-backup:
+    image: comworkio/bucket-backup:latest
+    build: 
+      context: .
+      dockerfile: Dockerfile

@@ -1,0 +1,9 @@
+---
+backup_max_retention: 3
+backup_bucket_image: comworkio/bucket-backup
+backup_bucket_image_tag: 1.0
+bucket_endpoint: changeit
+bucket_access_key: changeit
+bucket_secret_key: changeit
+backup_cmd: "echo \"backup in progress\""
+backup_post_clean_cmd: "echo \"cleaning in progress\""

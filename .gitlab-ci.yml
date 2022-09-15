@@ -1,0 +1,22 @@
+stages:
+  - publish
+  - deliver
+
+mirror:
+  stage: publish
+  script:
+    - setsid ./ci/mirror.sh
+  only:
+    - /^(main.*)$/
+  tags:
+    - mirror
+
+deliver:
+  stage: deliver
+  script:
+    - setsid ./ci/docker-deliver.sh "bucket-backup" "1.0"
+  only:
+    refs:
+      - /^(main.*)$/
+  tags:
+    - imagesbuilder

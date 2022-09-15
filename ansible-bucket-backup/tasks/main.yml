@@ -1,0 +1,20 @@
+---
+- name: Creation of bucket backup script
+  become: yes
+  template:
+    src: "{{ item.file }}.j2"
+    dest: "{{ item.path }}/{{ item.file }}"
+    mode: '0755'
+    owner: root
+    group: root
+  with_items:
+    - { path: "{{ node_home }}", file: "bucket-save.sh"}
+
+- name: Creates backup cron
+  ansible.builtin.cron:
+    name: backup cron
+    minute: "0"
+    hour: "3"
+    user: root
+    job: "bash {{ node_home }}/bucket-save.sh"
+    cron_file: ansible_bucket_backup
