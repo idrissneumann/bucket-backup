@@ -11,7 +11,9 @@ EXECUTION_DATE="$(date "$DATE_FORMAT")"
 BUCKET_ENDPOINT="{{ bucket_endpoint }}"
 BUCKET_ACCESS_KEY="{{ bucket_access_key }}"
 BUCKET_SECRET_KEY="{{ bucket_secret_key }}"
+{% if bucket_name is defined and bucket_name %}
 BUCKET_NAME="{{ bucket_name }}"
+{% endif %}
 
 {% if backup_cmd is defined and backup_cmd %}
 {{ backup_cmd }}

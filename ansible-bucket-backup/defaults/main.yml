@@ -7,3 +7,5 @@ bucket_access_key: changeit
 bucket_secret_key: changeit
 backup_cmd: "echo \"backup in progress\""
 backup_post_clean_cmd: "echo \"cleaning in progress\""
+backup_folder: /home/backups
+backup_inside_container: /backups
