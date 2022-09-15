@@ -4,6 +4,8 @@ A simple container wich send a mount volume content to an object storage bucket 
 
 It's interoperable when your infrastructure provide object storages with S3 compatibility standard  (it's using the mini-o client).
 
+You'll find a tutorial on how to use it with ansible on the [comwork cloud documentation](https://doc.cloud.comwork.io/docs/tutorials/dbaas#backup-on-buckets).
+
 ## Table of content
 
 [[_TOC_]]
@@ -60,3 +62,5 @@ docker-compose up --build
 ### Deployment with ansible
 
 You can check our ansible role [here](./ansible-bucket-backup)
+
+You'll find a tutorial on how to use it with ansible on the [comwork cloud documentation](https://doc.cloud.comwork.io/docs/tutorials/dbaas#backup-on-buckets).
