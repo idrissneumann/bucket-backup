@@ -38,7 +38,17 @@ bucket_backup() {
     endpoint="https://s3.${region}.scw.cloud"
     bucket_subpath=""
     [[ $bucket_name ]] && bucket_subpath="${bucket_name}/"
-    echo "[bucket_backup] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}"
+    echo "[bucket_backup][scaleway] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}"
+  fi
+
+  # If you use ovh endpoint, pretty same things
+  if [[ $endpoint =~ https://.*.s3..*.perf.cloud.ovh.net ]]; then
+    bucket_name="$(echo $endpoint|sed "s/https:\/\/\(.*\)\.s3\..*\.perf\.cloud\.ovh\.net/\1/g")"
+    region="$(echo $endpoint|sed "s/https:\/\/.*\.s3\.\(.*\)\.perf\.cloud\.ovh\.net/\1/g")"
+    endpoint="https://s3.${region}.perf.cloud.ovh.net"
+    bucket_subpath=""
+    [[ $bucket_name ]] && bucket_subpath="${bucket_name}/"
+    echo "[bucket_backup][ovh] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}"
   fi
 
   "${MC_BIN}" config host add "r${dest}" "${endpoint}" "${access_key}" "${secret_key}"
