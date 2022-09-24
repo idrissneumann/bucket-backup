@@ -29,6 +29,11 @@ You'll find a tutorial on how to use it with ansible on the [comwork cloud docum
 * `DATE_FORMAT` (optional): backup date format (folder name). Default `+%F` which corresponds to `YYYY-MM-JJ`)
 * `MAX_RETENTION` (optional): number of days to keep backup. Default: `5` days.s
 
+Not: you can upload to multiple backup using an increment suffix (the suffix must be consecutives and start from `1`):
+* `BUCKET_ENDPOINT_1`, `BUCKET_ACCESS_KEY_1`, `BUCKET_SECRET_KEY_1`, `BUCKET_NAME_1`
+* `BUCKET_ENDPOINT_2`, `BUCKET_ACCESS_KEY_2`, `BUCKET_SECRET_KEY_2`, `BUCKET_NAME_2`
+* etc
+
 ## Scaleway endpoints
 
 With scaleway you either configure this container like this:
