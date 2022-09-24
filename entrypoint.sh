@@ -32,11 +32,13 @@ bucket_backup() {
   echo "[bucket_backup] Deleting data older than $(date --date="${MAX_RETENTION} days ago" "${DATE_FORMAT}")"
 
   # If you use a scaleway endpoint, there's some specificities to handle
-  if [[ $endpoint =~ https://.+s3.fr-par.scw.cloud ]]; then
-    bucket_name="$(echo $endpoint|sed "s/https:\/\/\(.*\)\.s3\.fr\-par\.scw\.cloud/\1/g")"
-    endpoint="https://s3.fr-par.scw.cloud"
+  if [[ $endpoint =~ https://.+s3.*.scw.cloud ]]; then
+    bucket_name="$(echo $endpoint|sed "s/https:\/\/\(.*\)\.s3\..*\.scw\.cloud/\1/g")"
+    region="$(echo $endpoint|sed "s/https:\/\/.*\.s3\.\(.*\)\.scw\.cloud/\1/g")"
+    endpoint="https://s3.${region}.scw.cloud"
     bucket_subpath=""
     [[ $bucket_name ]] && bucket_subpath="${bucket_name}/"
+    echo "[bucket_backup] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}"
   fi
 
   "${MC_BIN}" config host add "r${dest}" "${endpoint}" "${access_key}" "${secret_key}"
