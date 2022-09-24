@@ -8,6 +8,7 @@ DATE_FORMAT="{{ backup_date_format }}"
 EXECUTION_DATE="$(date "$DATE_FORMAT")"
 
 # Bucket file sync variables
+DOCKER_ENV_OPTS=""
 {% if backup_buckets is defined and backup_buckets %}
 {% set count = [] %}
 {% for b in backup_buckets %}
@@ -30,6 +31,10 @@ BUCKET_SECRET_KEY_{{ count|length }}="{{ bucket_secret_key }}"
 {% if b.name is defined and b.name %}
 BUCKET_NAME_{{ count|length }}="{{ b.name }}"
 {% endif %}
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_NAME_{{ count|length }}=$BUCKET_NAME_{{ count|length }}"
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_ACCESS_KEY_{{ count|length }}=$BUCKET_ACCESS_KEY_{{ count|length }}"
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_SECRET_KEY_{{ count|length }}=$BUCKET_SECRET_KEY_{{ count|length }}"
+DOCKER_ENV_OPTS="$BUCKET_ENDPOINT_ -e BUCKET_ENDPOINT_{{ count|length }}=$BUCKET_SECRET_KEY_{{ count|length }}"
 {% endfor %}
 {% else %}
 BUCKET_ENDPOINT="{{ bucket_endpoint }}"
@@ -38,6 +43,10 @@ BUCKET_SECRET_KEY="{{ bucket_secret_key }}"
 {% if bucket_name is defined and bucket_name %}
 BUCKET_NAME="{{ bucket_name }}"
 {% endif %}
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_NAME=$BUCKET_NAME"
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_ACCESS_KEY=$BUCKET_ACCESS_KEY"
+DOCKER_ENV_OPTS="$DOCKER_ENV_OPTS -e BUCKET_SECRET_KEY=$BUCKET_SECRET_KEY"
+DOCKER_ENV_OPTS="$BUCKET_ENDPOINT_ -e BUCKET_ENDPOINT=$BUCKET_SECRET_KEY"
 {% endif %}
 
 {% if backup_cmd is defined and backup_cmd %}
@@ -70,14 +79,11 @@ echo "Pulling bucket backup file sync image"
 docker pull {{ backup_bucket_image }}:{{ backup_bucket_image_tag }}
 
 docker run \
-  -e BUCKET_ENDPOINT="$BUCKET_ENDPOINT" \
-  -e BUCKET_ACCESS_KEY="$BUCKET_ACCESS_KEY" \
-  -e BUCKET_SECRET_KEY="$BUCKET_SECRET_KEY" \
-  -e BUCKET_NAME="$BUCKET_NAME" \
   -e MAX_RETENTION="{{ backup_max_retention }}" \
   -e BACKUP_LOCATION="{{ backup_inside_container }}/$BACKUP_ZIP_FILE" \
   -e FILE_NAME="$BACKUP_ZIP_FILE" \
   -v "${VOLUME_BACKUP}" \
+  ${DOCKER_ENV_OPTS} \
   --rm \
   --name backup \
   {{ backup_bucket_image }}:{{ backup_bucket_image_tag }}
