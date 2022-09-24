@@ -8,14 +8,28 @@ DATE_FORMAT="{{ backup_date_format }}"
 EXECUTION_DATE="$(date "$DATE_FORMAT")"
 
 # Bucket file sync variables
-{% if bucket_names is defined and bucket_names %}
+{% if buckets is defined and buckets %}
 {% set count = [] %}
-{% for bn in bucket_names %}
+{% for b in buckets %}
 {% set __ = count.append(1) %} 
+{% if b.endpoint is defined and b.endpoint %}
+BUCKET_ENDPOINT_{{ count|length }}="{{ b.endpoint }}"
+{% else %}
 BUCKET_ENDPOINT_{{ count|length }}="{{ bucket_endpoint }}"
+{% endif %}
+{% if b.access_key is defined and b.access_key %}
+BUCKET_ACCESS_KEY_{{ count|length }}="{{ b.access_key }}"
+{% else %}
 BUCKET_ACCESS_KEY_{{ count|length }}="{{ bucket_access_key }}"
+{% endif %}
+{% if b.secret_key is defined and b.secret_key %}
+BUCKET_SECRET_KEY_{{ count|length }}="{{ b.secret_key }}"
+{% else %}
 BUCKET_SECRET_KEY_{{ count|length }}="{{ bucket_secret_key }}"
-BUCKET_NAME_{{ count|length }}="{{ bn }}"
+{% endif %}
+{% if b.name is defined and b.name %}
+BUCKET_NAME_{{ count|length }}="{{ b.name }}"
+{% endif %}
 {% endfor %}
 {% else %}
 BUCKET_ENDPOINT="{{ bucket_endpoint }}"
