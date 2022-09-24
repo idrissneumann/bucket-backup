@@ -8,9 +8,9 @@ DATE_FORMAT="{{ backup_date_format }}"
 EXECUTION_DATE="$(date "$DATE_FORMAT")"
 
 # Bucket file sync variables
-{% if buckets is defined and buckets %}
+{% if backup_buckets is defined and backup_buckets %}
 {% set count = [] %}
-{% for b in buckets %}
+{% for b in backup_buckets %}
 {% set __ = count.append(1) %} 
 {% if b.endpoint is defined and b.endpoint %}
 BUCKET_ENDPOINT_{{ count|length }}="{{ b.endpoint }}"
