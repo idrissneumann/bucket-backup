@@ -62,8 +62,8 @@ apply_bucket_backup() {
   bucket_name="${!var_bucket_name}"
   dest="cmw${suffix//_}"
 
+  echo "[apply_bucket_backup] suffix=${suffix} endpoint=${endpoint} bucket_name=${bucket_name} dest=${dest}"
   if [[ $endpoint && $access_key && $secret_key ]]; then 
-    echo "[apply_bucket_backup] endpoint=${endpoint} bucket_name=${bucket_name} dest=${dest}"
     bucket_backup "${endpoint}" "${access_key}" "${secret_key}" "${dest}" "${bucket_name}"
     return 0
   fi
@@ -72,7 +72,7 @@ apply_bucket_backup() {
 }
 
 apply_bucket_backup ""
-i=0
+i=1
 
 while true; do
   if ! apply_bucket_backup "_${i}"; then
