@@ -34,24 +34,6 @@ Not: you can upload to multiple backup using an increment suffix (the suffix mus
 * `BUCKET_ENDPOINT_2`, `BUCKET_ACCESS_KEY_2`, `BUCKET_SECRET_KEY_2`, `BUCKET_NAME_2`
 * etc
 
-## Scaleway endpoints
-
-With scaleway you either configure this container like this:
-
-```shell
-BUCKET_NAME=""
-BUCKET_ENDPOINT=https://{BUCKET_NAME}.s3.fr-par.scw.cloud
-```
-
-Or like this:
-
-```shell
-BUCKET_NAME="comwork-test-backups"
-BUCKET_ENDPOINT=https://s3.fr-par.scw.cloud
-```
-
-Our container will know how to handle both ways.
-
 ## Run it
 
 ### With docker-compose
