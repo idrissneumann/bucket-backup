@@ -52,8 +52,6 @@ bucket_backup() {
   dest="${4}"
   bucket_name="${5}"
 
-  "${MC_BIN}" config host add "${dest}" "${endpoint}" "${access_key}" "${secret_key}"
-
   infos="$(compute_bucket_name_and_path "${endpoint}" "${bucket_name}")"
   region="$(echo "${infos}"|awk -F "::" '{print $1}')"
   bucket_name="$(echo "${infos}"|awk -F "::" '{print $2}')"
@@ -61,6 +59,7 @@ bucket_backup() {
   bucket_subpath="$(echo "${infos}"|awk -F "::" '{print $4}')"
   echo "[bucket_backup] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}, bucket_subpath=${bucket_subpath}"  
 
+  "${MC_BIN}" config host add "${dest}" "${endpoint}" "${access_key}" "${secret_key}"
   echo "[bucket_backup] Copying backup file. ${BACKUP_LOCATION} -> ${dest}/${bucket_subpath}${BACKUP_FOLDER}/${TODAY}.${FILE_EXTENSION}"
   "${MC_BIN}" cp "${BACKUP_LOCATION}" "${dest}/${bucket_subpath}${BACKUP_FOLDER}/${TODAY}.${FILE_EXTENSION}"
 }
@@ -72,9 +71,9 @@ clean_folder() {
   echo "[clean_folder] Running ${MC_BIN} ls -r r${dest}/${folder}${BACKUP_FOLDER}/"
   "${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/"
 
-  result=$("${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/")
+  result=$("${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/" 2>&1|wc -l)
 
-  if [[ ! $result ]]; then
+  if [[ $result -ge 2 ]]; then
     echo "[clean_folder] No results found with folder=${folder}"
     return
   fi
