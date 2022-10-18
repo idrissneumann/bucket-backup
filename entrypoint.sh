@@ -66,25 +66,25 @@ bucket_backup() {
 }
 
 clean_folder() {
-  bucket_subpath="$1"
+  folder="$1"
   dest="$2"
 
-  echo "[clean_folder] Running ${MC_BIN} ls -r r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
-  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
+  echo "[clean_folder] Running ${MC_BIN} ls -r r${dest}/${folder}${BACKUP_FOLDER}/"
+  "${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/"
 
-  result=$("${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/")
+  result=$("${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/")
 
   if [[ ! $result ]]; then
-    echo "[clean_folder] No results found with bucket_subpath=${bucket_subpath}"
+    echo "[clean_folder] No results found with folder=${folder}"
     return
   fi
 
-  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/" |
+  "${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/" |
     awk '{print $6}' |
     grep -v -w "$DATES_TO_KEEP" |
     while read backup_file; do
-      echo "[clean_folder] Removing r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
-      "${MC_BIN}" rm "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
+      echo "[clean_folder] Removing r${dest}/${folder}${BACKUP_FOLDER}/$backup_file"
+      "${MC_BIN}" rm "r${dest}/${folder}${BACKUP_FOLDER}/$backup_file"
     done
 }
 
