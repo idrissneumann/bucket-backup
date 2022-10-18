@@ -14,7 +14,7 @@ mirror:
 deliver:
   stage: deliver
   script:
-    - setsid ./ci/docker-deliver.sh "bucket-backup" "2.6"
+    - setsid ./ci/docker-deliver.sh "bucket-backup" "2.7"
   only:
     refs:
       - /^(main.*)$/

@@ -73,7 +73,7 @@ clean_folder() {
 
   result=$("${MC_BIN}" ls -r "r${dest}/${folder}${BACKUP_FOLDER}/" 2>&1|wc -l)
 
-  if [[ $result -ge 2 ]]; then
+  if [[ $result -lt 2 ]]; then
     echo "[clean_folder] No results found with folder=${folder}"
     return
   fi
