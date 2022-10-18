@@ -65,6 +65,29 @@ bucket_backup() {
   "${MC_BIN}" cp "${BACKUP_LOCATION}" "${dest}/${bucket_subpath}${BACKUP_FOLDER}/${TODAY}.${FILE_EXTENSION}"
 }
 
+clean_folder() {
+  bucket_subpath="$1"
+  dest="$2"
+
+  echo "[clean_folder] Running ${MC_BIN} ls -r r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
+  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
+
+  result=$("${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/")
+
+  if [[ ! $result ]]; then
+    echo "[clean_folder] No results found with bucket_subpath=${bucket_subpath}"
+    return
+  fi
+
+  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/" |
+    awk '{print $6}' |
+    grep -v -w "$DATES_TO_KEEP" |
+    while read backup_file; do
+      echo "[clean_folder] Removing r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
+      "${MC_BIN}" rm "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
+    done
+}
+
 clean_backups() {
   endpoint="${1}"
   access_key="${2}"
@@ -83,24 +106,8 @@ clean_backups() {
   echo "[clean_backups] region=${region}, bucket_name=${bucket_name}, endpoint=${endpoint}, bucket_subpath=${bucket_subpath}"  
 
   "${MC_BIN}" config host add "r${dest}" "${endpoint}" "${access_key}" "${secret_key}"
-  echo "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
-
-  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
-  results=$("${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/")
-  if [[ ! $results ]]; then
-    bucket_subpath="${bucket_subpath}${bucket_name}/"
-    echo "[clean_backups] Retry with bucket_subpath=${bucket_subpath}"
-    echo "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
-    "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/"
-  fi
-
-  "${MC_BIN}" ls -r "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/" |
-    awk '{print $6}' |
-    grep -v -w "$DATES_TO_KEEP" |
-    while read backup_file; do
-      echo "[bucket_backup] Removing r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
-      "${MC_BIN}" rm "r${dest}/${bucket_subpath}${BACKUP_FOLDER}/$backup_file"
-    done
+  clean_folder "${bucket_subpath}" "${dest}"
+  clean_folder "${bucket_subpath}${bucket_name}/" "${dest}"
 }
 
 apply_bucket_backup() {
