@@ -6,6 +6,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+      args:
+        - MC_VERSION=RELEASE.2022-10-29T10-09-23Z
     env_file:
       - .env
     volumes:

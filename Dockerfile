@@ -1,4 +1,6 @@
-FROM minio/mc
+ARG MC_VERSION
+
+FROM minio/mc:${MC_VERSION}
 
 ENV BACKUP_FOLDER "backup-data"
 
