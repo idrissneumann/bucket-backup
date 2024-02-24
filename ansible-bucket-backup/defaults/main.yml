@@ -1,7 +1,7 @@
 ---
 backup_max_retention: 3
 backup_bucket_image: comworkio/bucket-backup
-backup_bucket_image_tag: 2.8
+backup_bucket_image_tag: "2.10"
 bucket_endpoint: changeit
 bucket_access_key: changeit
 bucket_secret_key: changeit
