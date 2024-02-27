@@ -37,6 +37,7 @@ compute_bucket_name_and_path() {
   if [[ $endpoint =~ https://.*.s3..*.perf.cloud.ovh.net ]]; then
     bucket_name="$(echo $endpoint|sed "s/https:\/\/\(.*\)\.s3\..*\.perf\.cloud\.ovh\.net/\1/g")"
     region="$(echo $endpoint|sed "s/https:\/\/.*\.s3\.\(.*\)\.perf\.cloud\.ovh\.net/\1/g")"
+    region="${region%/}"
     endpoint="https://s3.${region}.perf.cloud.ovh.net"
     bucket_subpath=""
     [[ $bucket_name ]] && bucket_subpath="${bucket_name}/"

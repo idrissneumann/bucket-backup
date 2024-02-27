@@ -72,3 +72,7 @@ hs_err_pid*.log
 *.pem
 
 .env
+
+# test script
+test.sh
+
